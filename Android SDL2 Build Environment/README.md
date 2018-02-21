@@ -1,0 +1,3 @@
+This Bash shell script will create a command line build environment for SDL2 Android apps written in C/C++, on Debian based systems.  Sadly, it will not work on Raspberry Pi, because Google has not seen fit to create Android SDK or NDK builds that will run on ARM.
+
+When this script finishes, you should have an `Android` directory in your home directory.  It will contain a `projects` directory, where you will find a template project.  This can be copied to create a new project.  A makefile is included that can build your app (for x86 and armeabi), package it, and install it onto a connected Android device (that has developer mode activated).
