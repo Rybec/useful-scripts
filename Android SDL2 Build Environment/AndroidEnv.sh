@@ -1,5 +1,5 @@
 # Get necessary packages
-sudo apt-get install openjdk-8-jdk ant android-sdk-platform-tools-common
+#sudo apt-get install openjdk-8-jdk ant android-sdk-platform-tools-common
 
 # Make Android directory, for doing all this stuff
 cd ~
@@ -95,6 +95,28 @@ cp jni/SDL/include/* $NDK_x86/sysroot/usr/include/SDL2/
 cp jni/*/SDL*.h $NDK_x86/sysroot/usr/include/SDL2/
 
 
+# Install OpenSSL (for HTTPS support)
+
+cd $HOME/Android
+mkdir openssl
+cd openssl
+wget https://www.openssl.org/source/openssl-1.0.2g.tar.gz
+tar xzf openssl-1.0.2g.tar.gz
+rm openssl-1.0.2g.tar.gz
+
+wget https://raw.githubusercontent.com/Rybec/pjsip-android-builder/master/openssl-build
+chmod +x openssl-build
+
+./openssl-build $HOME/Android/android-ndk-r16b/ ./openssl-1.0.2g 21 armeabi 4.9 ~/Android/openssl/arm/
+./openssl-build $HOME/Android/android-ndk-r16b/ ./openssl-1.0.2g 21 x86 4.9 ~/Android/openssl/x86/
+
+cp arm/lib/* $NDK_ARM/sysroot/usr/lib/ -r
+cp x86/lib/* $NDK_x86/sysroot/usr/lib/ -r
+
+cp arm/include/openssl $NDK_ARM/sysroot/usr/include/ -r
+cp x86/include/openssl $NDK_x86/sysroot/usr/include/ -r
+
+
 # Create project template
 
 # Create Projects Directory
@@ -107,6 +129,17 @@ cd template
 
 cp ~/Android/SDL2/SDL2/build/org.libsdl/libs ./ -r
 
+cp ~/Android/openssl/arm/lib/libssl.so ./libs/armeabi/
+cp ~/Android/openssl/arm/lib/libcrypto.so ./libs/armeabi/
+cp ~/Android/openssl/x86/lib/libssl.so ./libs/x86/
+cp ~/Android/openssl/x86/lib/libcrypto.so ./libs/x86/
+
+
+## Tell Java to load these
+sed -i '/\/\/ "SDL2_ttf",/ a\            "ssl",\n            "crypto",' src/org/libsdl/app/SDLActivity.java
+
+
+# Time to create a basic Makefile!
 echo > Makefile
 echo "NAME = appname" >> Makefile
 echo "API = android-21" >> Makefile
