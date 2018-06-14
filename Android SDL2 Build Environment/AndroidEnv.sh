@@ -1,5 +1,5 @@
 # Get necessary packages
-#sudo apt-get install openjdk-8-jdk ant android-sdk-platform-tools-common
+sudo apt-get install openjdk-8-jdk ant android-sdk-platform-tools-common
 
 # Make Android directory, for doing all this stuff
 cd ~
